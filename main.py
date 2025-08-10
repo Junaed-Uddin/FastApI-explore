@@ -29,5 +29,5 @@ def blogs():
 @app.get("/blogs/{blog_id}")
 def single_blog(blog_id):
     return{
-        "data": f"Blog {blog_id} published successfully"
+        "data": f"Blog {blog_id} published"
     }
