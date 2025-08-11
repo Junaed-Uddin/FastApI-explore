@@ -3,6 +3,7 @@ sys.path.append(os.path.dirname(__file__))
 
 from fastapi import FastAPI, Depends, status, Response, HTTPException
 from database import engine, SessionLocal
+from typing import List
 import schemas, models
 from sqlalchemy.orm import Session
 
@@ -25,6 +26,7 @@ def get_db():
         db.close()
     
     
+    
 @app.post("/blog", status_code= status.HTTP_201_CREATED)
 def create_blogs(blog: schemas.Blog, db: Session = Depends(get_db)):
     new_blog = models.Blog(title = blog.title, description = blog.description, 
@@ -35,22 +37,24 @@ def create_blogs(blog: schemas.Blog, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_blog)
     return new_blog
+   
     
     
-@app.get("/blog")
+@app.get("/blog") # response_model = List[schemas.BlogShow]
 def all_blogs(db: Session = Depends(get_db)):
     blog = db.query(models.Blog).all()
     return blog
     
 
-@app.get("/blog/{id}", status_code = 200)
-def single_blog(id: int, response: Response, db: Session = Depends(get_db)):
+@app.get("/blog/{id}", status_code = 200, response_model = schemas.BlogShow)
+def single_blog(id: int, db: Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == id).first()  # .first() or .all()
     if not blog:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= f"blog with the id {id} is not exist")
         # response.status_code = status.HTTP_404_NOT_FOUND
         # return {"detail": f"blog with the id {id} is not exist"}
     return blog
+
 
 @app.delete("/blog/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def blog_delete(id, db: Session = Depends(get_db)):
@@ -66,7 +70,7 @@ def blog_delete(id, db: Session = Depends(get_db)):
         "data":{f"The blog with id {id} successfully deleted"}
     } 
     
-
+    
 @app.put("/blog/{id}", status_code = status.HTTP_202_ACCEPTED)
 def blog_update(id, request: schemas.Blog, db: Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == id)
@@ -79,3 +83,16 @@ def blog_update(id, request: schemas.Blog, db: Session = Depends(get_db)):
     db.commit()
     return "Updated Successfully"
  
+
+@app.post("/users", status_code = status.HTTP_201_CREATED)
+def create_user(user: schemas.User, db: Session = Depends(get_db)):
+    new_user = models.User(**user.model_dump())
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
+
+@app.get("/users", response_model = List[schemas.UserShow])
+def show_all_users(db: Session = Depends(get_db)):
+    users = db.query(models.User).all()
+    return users

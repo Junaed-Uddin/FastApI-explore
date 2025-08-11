@@ -13,3 +13,12 @@ class Blog(Base):
     time: Mapped[str] = mapped_column(String, nullable=False)  # or DateTime if you prefer
     isPublished: Mapped[bool] = mapped_column(Boolean, default=True)
     price: Mapped[int] = mapped_column(Integer, default=200)
+    
+class User(Base):
+    __tablename__ = "users"
+    
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    name: Mapped[str] = mapped_column(String)
+    email: Mapped[str] = mapped_column(String)
+    password: Mapped[str] = mapped_column(String)
+    
