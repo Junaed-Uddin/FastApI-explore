@@ -9,7 +9,7 @@ class Blog(BaseModel):
     isPublished: bool
     price: int
     
-     
+
 class BlogShow(BaseModel):
     title: str
     category: str
