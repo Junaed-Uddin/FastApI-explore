@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-import models, schemas
+from datetime import timedelta
+import models, schemas, auth_token
 from database import get_db
 from sqlalchemy.orm import Session
 from hashing import Hash
@@ -21,4 +22,8 @@ def login(request: schemas.Login, db: Session = Depends(get_db)):
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, 
                             detail = "Invalid Password")
         
-    return user
+    access_token_expires = timedelta(minutes=auth_token.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = auth_token.create_access_token(
+        data={"sub": user.email}, expires_delta=access_token_expires
+    )
+    return schemas.Token(access_token=access_token, token_type="bearer")
