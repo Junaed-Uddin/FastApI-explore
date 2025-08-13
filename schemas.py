@@ -1,3 +1,4 @@
+from typing import List
 from pydantic import BaseModel, ConfigDict
 
 class Blog(BaseModel):
@@ -9,15 +10,12 @@ class Blog(BaseModel):
     isPublished: bool
     price: int
     
-
-class BlogShow(BaseModel):
+class BlogBase(BaseModel):
     title: str
     category: str
     price: int
     model_config = ConfigDict(from_attributes=True)
-    # class Config():
-    #     orm_mode = True
-    
+      
 
 class User(BaseModel):
     name: str
@@ -28,4 +26,21 @@ class User(BaseModel):
 class UserShow(BaseModel):
     name: str
     email: str
+    blogs: List[BlogBase]
     model_config = ConfigDict(from_attributes=True)
+    
+
+class BlogShow(BaseModel):
+    title: str
+    category: str
+    price: int
+    creator: UserShow
+    model_config = ConfigDict(from_attributes=True)
+    # class Config():
+    #     orm_mode = True
+    
+    
+
+class Login(BaseModel):
+    username: str
+    password: str

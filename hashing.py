@@ -6,3 +6,6 @@ class Hash():
     def bcrypt(password: str):
         return pwt_context.hash(password)
 
+    def verify_password(plain_password, hashed_password):
+        return pwt_context.verify(plain_password, hashed_password)
+        
