@@ -14,7 +14,7 @@ class Blog(Base):
     description: Mapped[str] = mapped_column(String, nullable=True)
     publisher: Mapped[str] = mapped_column(String, nullable=False)
     category: Mapped[str] = mapped_column(String, nullable=False)
-    time: Mapped[str] = mapped_column(String, nullable=False)  # or DateTime if you prefer
+    time: Mapped[str] = mapped_column(String, nullable=False)
     isPublished: Mapped[bool] = mapped_column(Boolean, default=True)
     price: Mapped[int] = mapped_column(Integer, default=200)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), index=True)
